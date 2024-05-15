@@ -4,6 +4,7 @@ const minSpeed = 0.1
 const maxSpeed = 2 
 const alignmentFactor = 0.095
 const cohesionFactor = 0.095
+const collisionAvoidFactor = 0.3
 
 let canvas = document.getElementById('canvas')
 let ctx = canvas.getContext('2d')
