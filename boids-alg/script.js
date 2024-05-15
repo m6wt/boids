@@ -4,7 +4,7 @@ const minSpeed = 0.1
 const maxSpeed = 2 
 const alignmentFactor = 0.095
 const cohesionFactor = 0.095
-const collisionAvoidFactor = 0.3
+const collisionAvoidFactor = 0.095
 
 let canvas = document.getElementById('canvas')
 let ctx = canvas.getContext('2d')
@@ -19,7 +19,6 @@ function drawBoid(object) {
     ctx.translate(object.x, object.y)
 
     if (object.type === 'object') {
-        // Draw the random polygon
         ctx.beginPath()
         ctx.moveTo(object.radius, 0)
         for (let i = 1; i < object.sides; i++) {            
@@ -32,7 +31,6 @@ function drawBoid(object) {
         ctx.fillStyle = 'black'
         ctx.fill()
     } else {
-        // Draw the boid shape (an arrow)
         let angle = Math.atan2(object.vy, object.vx)
         ctx.rotate(angle)
         ctx.beginPath()
@@ -49,7 +47,7 @@ function drawBoid(object) {
 
 
 function animate(objects) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
 
     for (let boid of flock) {
         let neighbors = []
@@ -155,31 +153,31 @@ class QuadTree {
 
 class Object {
     constructor(x, y, vx, vy, radius) {
-        this.x = x;
-        this.y = y;
-        this.vx = vx;
-        this.vy = vy;
-        this.radius = radius;
-        this.type = 'object';
-        this.sides = Math.floor(Math.random() * 7) + 3;
+        this.x = x
+        this.y = y
+        this.vx = vx
+        this.vy = vy
+        this.radius = radius
+        this.type = 'object'
+        this.sides = Math.floor(Math.random() * 7) + 3
     }
 
     collide(otherObject) {
-        const dx = otherObject.x - this.x;
-        const dy = otherObject.y - this.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        return distance < this.radius + otherObject.radius;
+        const dx = otherObject.x - this.x
+        const dy = otherObject.y - this.y
+        const distance = Math.sqrt(dx * dx + dy * dy)
+        return distance < this.radius + otherObject.radius
     }
 
 }
 
 class Boid {
     constructor(x, y, vx, vy, biasVal) {
-        this.x = x;
-        this.y = y;
-        this.vx = vx;
-        this.vy = vy;
-        this.biasVal = biasVal;
+        this.x = x
+        this.y = y
+        this.vx = vx
+        this.vy = vy
+        this.biasVal = biasVal
     }
 
     cohesion(neighbors) {
@@ -250,6 +248,15 @@ class Boid {
                 avoidY -= dy / (distance * distance)
             }
         }
+
+        if (avoidX === 0 && avoidY === 0) {
+            return {x: 0, y: 0}
+        }
+
+        const avoidMagnitude = Math.sqrt(avoidX * avoidX + avoidY * avoidY)
+        avoidX /= avoidMagnitude
+        avoidY /= avoidMagnitude
+        
         return {x: avoidX, y: avoidY}
     }
     update(neighbors, objects) {
